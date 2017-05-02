@@ -3,9 +3,10 @@ import datetime
 import time
 import subprocess
 import pyautogui
-from rustcmd import send_command
+from rustcmd import send_command, wait_for_log, send_command_and_await_response
 from win32util import does_window_exist
 from webbrowser import open as web_open
+import settings
 
 def get_last_update_time(client, branch='public'):
     info = client.get_product_info(apps=[252490])
@@ -26,20 +27,22 @@ def launch_rust():
     pyautogui.press('enter')
 
 def connect_to_server(ip):
-    send_command('connect ' + ip)
+    while not send_command_and_await_response('connect ' + ip, 'Generating terrain', timeout=60):
+        pass
 
 def wait_for_menu():
-    # TODO: wait properly
-    time.sleep(10)
-    print("initializing wipe hype")
-    send_command('echo Wipe Hype Initialized')
+    print('initializing wipe hype')
+    while not send_command_and_await_response('echo Initialized Wipe Hype', 'Initialized Wipe Hype', timeout=0.5):
+        pass
+
+def afk():
+    
 
 def launch_updated_rust():
     stop_steam()
     launch_rust()
     wait_for_menu()
-    # rustopia ip 74.91.125.225:28026
-    connect_to_server('74.91.125.225:28026')
+    connect_to_server(settings.server_ip)
 
 def start_update_loop(wait_time=10):
     client = steam.SteamClient()
@@ -52,8 +55,7 @@ def start_update_loop(wait_time=10):
     while True:
         update_time = get_last_update_time(client)
         print(update_time.strftime('%c'))
-        #if update_time != prev_update_time:
-        if True:
+        if update_time != prev_update_time:
             launch_updated_rust()
             break
         prev_update_time = update_time
