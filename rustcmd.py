@@ -15,6 +15,11 @@ def find_in_log(text):
             return True
     return False
 
+def afk():
+    while True:
+        pyautogui.press('w')
+        time.sleep(10)
+
 def send_command_and_await_response(command, response, timeout=60):
     # TODO: merge this function with wait_for_log
     f = open(settings.rust_log_path, 'r', encoding='utf-8')

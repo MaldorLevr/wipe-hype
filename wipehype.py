@@ -3,7 +3,7 @@ import datetime
 import time
 import subprocess
 import pyautogui
-from rustcmd import send_command, wait_for_log, send_command_and_await_response
+from rustcmd import send_command, wait_for_log, send_command_and_await_response, afk
 from win32util import does_window_exist
 from webbrowser import open as web_open
 import settings
@@ -35,14 +35,12 @@ def wait_for_menu():
     while not send_command_and_await_response('echo Initialized Wipe Hype', 'Initialized Wipe Hype', timeout=0.5):
         pass
 
-def afk():
-    
-
 def launch_updated_rust():
     stop_steam()
     launch_rust()
     wait_for_menu()
     connect_to_server(settings.server_ip)
+    afk()
 
 def start_update_loop(wait_time=10):
     client = steam.SteamClient()
